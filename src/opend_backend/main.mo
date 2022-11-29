@@ -10,14 +10,14 @@ actor OpenD {
     var mapOfNFTs = HashMap.HashMap<Principal, NFTActorClass.NFT>(1, Principal.equal, Principal.hash);
     var mapOfOwners = HashMap.HashMap<Principal, List.List<Principal>>(1, Principal.equal, Principal.hash);
 
-    public shared(msg) func mint(imgData: [Nat8], name: Text): async Principal {
-        let owner: Principal = msg.caller;
+    public shared(msg) func mint(imgData: [Nat8], name: Text) : async Principal {
+        let owner : Principal = msg.caller;
 
-        Debug.print(debug_show(Cycles.balance()));
-        Cycles.add(100_500_000_000_000);
+        // NFT CANISTER ID: si2b5-pyaaa-aaaaa-aaaja-cai
 
+        Debug.print(debug_show(Cycles.balance())); 
+        Cycles.add(200_500_000_000);
         let newNFT = await NFTActorClass.NFT(name, owner, imgData);
-        
         Debug.print(debug_show(Cycles.balance()));
 
         let newNFTPrincipal = await newNFT.getCanisterId();
@@ -25,7 +25,7 @@ actor OpenD {
         mapOfNFTs.put(newNFTPrincipal, newNFT);
         addToOwnershipMap(owner, newNFTPrincipal);
 
-        return newNFTPrincipal;
+        return newNFTPrincipal
     };
 
     private func addToOwnershipMap(owner: Principal, nftId: Principal) {
