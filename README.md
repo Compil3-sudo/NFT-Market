@@ -97,7 +97,9 @@ dfx canister call opend_backend mint '(vec {137; 80; 78; 71; 13; 10; 26; 10; 0; 
 ```
 dfx canister call opend_backend listItem '(principal "<REPLACE WITH NFT CANISTER ID>", 2)'
 
-dfx canister call opend_backend listItem '(principal "xghmb-iaaaa-aaaaa-aaavq-cai", 2)'
+dfx canister call opend_backend listItem '(principal "vj4vq-xyaaa-aaaaa-aaaza-cai", 2)'
+
+dfx canister call opend_backend listItem '(principal "va76m-bqaaa-aaaaa-aaayq-cai", 2)'
 ```
 
 3. Get OpenD canister ID:
@@ -111,7 +113,9 @@ dfx canister id opend_backend
 ```
 dfx canister call <REPLACE WITH NFT CANISTER ID> transferOwnership '(principal "<REPLACE WITH OPEND CANISTER ID>", true)'
 
-dfx canister call xghmb-iaaaa-aaaaa-aaavq-cai transferOwnership '(principal "si2b5-pyaaa-aaaaa-aaaja-cai", true)'
+dfx canister call va76m-bqaaa-aaaaa-aaayq-cai transferOwnership '(principal "si2b5-pyaaa-aaaaa-aaaja-cai", true)'
+
+dfx canister call vj4vq-xyaaa-aaaaa-aaaza-cai transferOwnership '(principal "si2b5-pyaaa-aaaaa-aaaja-cai", true)'
 ```
 
 # Conneting to the Token Canister

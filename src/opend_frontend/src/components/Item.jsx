@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { idlFactory } from "../../../declarations/nft";
+import { idlFactory as tokenIdlFactory } from "../../../declarations/token_backend";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend_backend } from "../../../declarations/opend_backend";
@@ -18,6 +19,7 @@ function Item(props) {
   const [blur, setBlur] = useState();
   const [sellStatus, setSellStatus] = useState("");
   const [priceLabel, setPriceLabel] = useState();
+  const [shouldDisplay, setDisplay] = useState(true);
 
 
   let price;
@@ -110,10 +112,30 @@ function Item(props) {
 
   async function handleBuy() {
     console.log("Buy was triggered");
+    setLoaderHidden(false);
+
+    const tokenActor = await Actor.createActor(tokenIdlFactory, {
+      agent,
+      canisterId: Principal.fromText("xta5m-jiaaa-aaaaa-aaawa-cai"),
+    });
+
+    const sellerId = await opend_backend.getOriginalOwner(props.id);
+    const itemPrice = await opend_backend.getListedNFTPrice(props.id);
+
+    const result = await tokenActor.transfer(sellerId, itemPrice);
+    console.log("Buy operation was: " + result);
+
+    if (result == "Success") {
+      // Transfer the ownership
+      const transferResult = await opend_backend.completePurchase(props.id, sellerId, CURRENT_USER_ID);
+      console.log("Purchase Result: " + transferResult);
+      setLoaderHidden(true);
+      setDisplay(false);
+    }
   }
 
   return (
-    <div className="disGrid-item">
+    <div style={{display: shouldDisplay ? "inline" : "none"}} className="disGrid-item">
       <div className="disPaper-root disCard-root makeStyles-root-17 disPaper-elevation1 disPaper-rounded">
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
