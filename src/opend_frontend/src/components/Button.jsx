@@ -1,4 +1,4 @@
-import React from "React";
+import React from "react";
 
 function Button(props) {
     return (<div className="Chip-root makeStyles-chipBlue-108 Chip-clickable">
