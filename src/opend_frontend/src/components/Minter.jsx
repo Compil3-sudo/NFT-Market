@@ -19,7 +19,7 @@ function Minter() {
 
     const newNFTID = await opend_backend.mint(imageByteData, name);
 
-    console.log(newNFTID.toText());
+    // console.log(newNFTID.toText());
     setNftPrincipal(newNFTID);
     setLoaderHidden(true);
   }

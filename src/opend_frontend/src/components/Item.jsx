@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../assets/logo.png";
 import { Actor, HttpAgent } from "@dfinity/agent";
-import { idlFactory } from "../../../declarations/nft";
+import { idlFactory } from "../../../../.dfx/local/canisters/nft";
 import { Principal } from "@dfinity/principal";
 import Button from "./Button";
 import { opend_backend } from "../../../declarations/opend_backend";
@@ -12,6 +12,10 @@ function Item(props) {
   const [image, setImage] = useState();
   const [button, setButton] = useState();
   const [priceInput, setPriceInput] = useState();
+  const [loaderHidden, setLoaderHidden] = useState(true);
+  const [blur, setBlur] = useState();
+  const [sellStatus, setSellStatus] = useState("");
+
   let price;
 
   const id = props.id;
@@ -19,8 +23,13 @@ function Item(props) {
   const localHost = "http://localhost:8080/";
   const agent = new HttpAgent({ host: localHost });
 
+  // TODO: When deploying to live server, remove the following line.
+  agent.fetchRootKey();
+
+  let NFTActor;
+
   async function loadNFT() {
-    const NFTActor = await Actor.createActor(idlFactory, {
+    NFTActor = await Actor.createActor(idlFactory, {
       agent,
       canisterId: id,
     });
@@ -37,7 +46,15 @@ function Item(props) {
     setOwner(owner.toText());
     setImage(image);
 
-    setButton(<Button handleClick={handleSell} text={"Sell"} />);
+    const nftIsListed = await opend_backend.isListed(props.id);
+
+    if (nftIsListed) {
+      setOwner("OpenD");
+      setBlur({ filter: "blur(4px)" });
+      setSellStatus("Listed");
+    } else {
+      setButton(<Button handleClick={handleSell} text={"Sell"} />);
+    }
   }
 
   useEffect(() => {
@@ -58,8 +75,22 @@ function Item(props) {
   }
 
   async function sellItem() {
+    setBlur({ filter: "blur(4px)" });
+    setLoaderHidden(false);
     const listingResult = await opend_backend.listItem(props.id, Number(price));
     console.log(listingResult);
+    if (listingResult == "Success") {
+      const openDId = await opend_backend.getOpenDCanisterID();
+      const transferResult = await NFTActor.transferOwnership(openDId);
+      console.log(transferResult);
+      if (transferResult == "Success") {
+        setLoaderHidden(true);
+        setButton();
+        setPriceInput();
+        setOwner("OpenD");
+        setSellStatus("Listed");
+      }
+    }
   }
 
 
@@ -69,10 +100,17 @@ function Item(props) {
         <img
           className="disCardMedia-root makeStyles-image-19 disCardMedia-media disCardMedia-img"
           src={image}
+          style={blur}
         />
+        <div className="lds-ellipsis" hidden={loaderHidden}>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
         <div className="disCardContent-root">
           <h2 className="disTypography-root makeStyles-bodyText-24 disTypography-h5 disTypography-gutterBottom">
-            {name}<span className="purple-text"></span>
+            {name}<span className="purple-text"> {sellStatus}</span>
           </h2>
           <p className="disTypography-root makeStyles-bodyText-24 disTypography-body2 disTypography-colorTextSecondary">
             Owner: {owner}
