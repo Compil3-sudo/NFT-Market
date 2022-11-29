@@ -1,5 +1,6 @@
 import Debug "mo:base/Debug";
 import Principal "mo:base/Principal";
+import Cycles "mo:base/ExperimentalCycles";
 
 actor class NFT (name: Text, owner: Principal, content: [Nat8]) = this {      
   private let itemName = name;
@@ -29,6 +30,6 @@ actor class NFT (name: Text, owner: Principal, content: [Nat8]) = this {
     } else {
       return "Error: Not initated by NFT Owner."
     }
-  }
+  };
 
 };
