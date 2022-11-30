@@ -29,7 +29,7 @@ function Header() {
   }, []);
 
   return (
-    <BrowserRouter forceRefresh={true}>
+    <BrowserRouter>
       <div className="app-root-1">
         <header className="Paper-root AppBar-root AppBar-positionStatic AppBar-colorPrimary Paper-elevation4">
           <div className="Toolbar-root Toolbar-regular header-appBar-13 Toolbar-gutters">
@@ -42,7 +42,7 @@ function Header() {
             <div className="header-empty-6"></div>
             <div className="header-space-8"></div>
             <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
-              <Link to="/discover">
+              <Link to="/discover" reloadDocument>
                 Discover
               </Link>
             </button>
@@ -52,7 +52,7 @@ function Header() {
               </Link>
             </button>
             <button className="ButtonBase-root Button-root Button-text header-navButtons-3">
-              <Link to="/collection">
+              <Link to="/collection" reloadDocument>
                 My NFTs
               </Link>
             </button>
